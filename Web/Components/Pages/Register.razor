@@ -1,0 +1,105 @@
+@page "/register"
+@rendermode InteractiveServer
+
+@using System.ComponentModel.DataAnnotations
+@using Web.Core
+@inject Web.Persistence.WebDbContext dbContext
+
+<form action="">
+    <EditForm Model="@user" OnValidSubmit="HandleValidSubmit">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+
+        <div class="form-group">
+            <label for="name">Name:</label>
+            <InputText id="name" class="form-control" @bind-Value="user.Name" required/>
+        </div>
+        <div class="form-group">
+            <label for="surname">Surname:</label>
+            <InputText id="surname" class="form-control" @bind-Value="user.Surname" required/>
+        </div>
+        <div class="form-group">
+            <label for="birthday">Birthday:</label>
+            <InputDate id="birthday" class="form-control" @bind-Value="user.Birthdate" required/>
+        </div>
+        <div class="form-group">
+            <label for="sex">Sex:</label>
+            <InputSelect id="sex" class="form-control" @bind-Value="user.Sex" required>
+                <option value="">Select</option>
+                <option value="male">Male</option>
+                <option value="female">Female</option>
+            </InputSelect>
+        </div>
+        <div class="form-group">
+            <label for="nationality">Nationality:</label>
+            <InputText id="nationality" class="form-control" @bind-Value="user.Nationality" required/>
+        </div>
+        <div class="form-group">
+            <label for="email">Email:</label>
+            <InputText id="email" type="email" class="form-control" @bind-Value="user.Email" required/>
+        </div>
+        <div class="form-group password-container">
+            <label for="password">Password:</label>
+            <div>
+                <InputText id="password" type="@passwordInputType" class="form-control" @bind-Value="user.Password" required/>
+                <button type="button" @onclick="TogglePasswordVisibility" class="btn btn-secondary">
+                    @toggleButtonText
+                </button>
+            </div>
+        </div>
+        <div class="form-group">
+            <button type="button" @onclick="Test" class="btn btn-primary">Mostrar datos</button>
+        </div>
+        <div class="form-group">
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </div>
+    </EditForm>
+</form>
+@if (!string.IsNullOrEmpty(displayData))
+{
+    <div>@displayData</div>
+}
+
+@code {
+    private User user = new User();
+    private bool isPasswordVisible = false;
+    private string? displayData { get; set; }
+
+    private string passwordInputType { get; set; } = "password";
+    private string toggleButtonText => isPasswordVisible ? "Hide" : "Show";
+
+    private void Test()
+    {
+        displayData = $"Name: {user.Name}, Surname: {user.Surname}, Birthdate: {user.Birthdate}, Sex: {user.Sex}, Nationality: {user.Nationality}, Email: {user.Email}, Password: {user.Password}";
+    }
+    
+    private void TogglePasswordVisibility()
+    {
+        isPasswordVisible = !isPasswordVisible;
+        // Update the type of the password input
+        passwordInputType = isPasswordVisible ? "text" : "password";
+    }
+
+
+    private async Task HandleValidSubmit()
+    {
+        if (user != null)
+        {
+            dbContext.Users!.Add(new(user.Name!, user.Surname!, user.Birthdate, user.Sex!, user.Nationality!, user.Email!, user.Password!));
+            await dbContext.SaveChangesAsync();
+            Console.WriteLine($"Se ha guardado {user.Name!}");
+        }
+    }
+}
+
+<style>
+    .password-container {
+        position: relative;
+    }
+    .password-container button {
+        position: absolute;
+        right: 0;
+        top: 0;
+        height: 100%;
+    }
+</style>

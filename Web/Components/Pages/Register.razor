@@ -72,7 +72,7 @@
     {
         displayData = $"Name: {user.Name}, Surname: {user.Surname}, Birthdate: {user.Birthdate}, Sex: {user.Sex}, Nationality: {user.Nationality}, Email: {user.Email}, Password: {user.Password}";
     }
-    
+
     private void TogglePasswordVisibility()
     {
         isPasswordVisible = !isPasswordVisible;
@@ -85,7 +85,8 @@
     {
         if (user != null)
         {
-            dbContext.Users!.Add(new(user.Name!, user.Surname!, user.Birthdate, user.Sex!, user.Nationality!, user.Email!, user.Password!));
+            user.Birthdate = user.Birthdate.ToUniversalTime();
+            await dbContext.Users.AddAsync(user);
             await dbContext.SaveChangesAsync();
             Console.WriteLine($"Se ha guardado {user.Name!}");
         }

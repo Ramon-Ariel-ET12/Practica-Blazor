@@ -39,7 +39,7 @@ public class User
     // Constructor vacío requerido por Entity Framework Core
     public User() {}
 
-    // Constructor con parámetros
+    // Constructor con parámetros (no se deberia usar)
     public User(string name, string surname, DateTime birthday, string sex, string nationality, string email, string password)
     {
         Name = name;

@@ -5,7 +5,7 @@ namespace Web.Persistence;
 
 public class WebDbContext(DbContextOptions<WebDbContext> options) : DbContext(options)
 {
-    public DbSet<User>? Users { get;}
+    public DbSet<User> Users { get; set; }
 }
 
 
